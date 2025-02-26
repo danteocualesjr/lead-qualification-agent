@@ -41,7 +41,7 @@ app.post('/qualify-lead', async (req, res) => {
     }
     
     // Create the prompt for lead qualification
-    const prompt = `Research ${companyName} and provide the following information in a structured format:
+    const promptText = `Research ${companyName} and provide the following information:
     1. Company size (employees and revenue if available)
     2. Industry and sub-industry
     3. Current tech stack, especially any CRM or sales tools
@@ -50,9 +50,9 @@ app.post('/qualify-lead', async (req, res) => {
     6. Key decision-makers in sales/marketing
     7. Potential pain points that our sales solution could address`;
     
-    // Call Perplexity API
+    // Call Perplexity API with correct model from documentation
     const response = await axios.post('https://api.perplexity.ai/chat/completions', {
-      model: "mixtral-8x7b-instruct",
+      model: "sonar-deep-research",
       messages: [
         {
           role: "system",
@@ -60,11 +60,9 @@ app.post('/qualify-lead', async (req, res) => {
         },
         {
           role: "user",
-          content: prompt
+          content: promptText
         }
-      ],
-      temperature: 0.7,
-      max_tokens: 800
+      ]
     }, {
       headers: {
         'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
