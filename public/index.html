@@ -70,33 +70,51 @@
         return;
       }
       
-      // Process and format the result text
+      // New logic to separate chain-of-thought from final results
       let formattedText = data.result;
       
+      // Detect and format chain-of-thought reasoning
+      const reasoningMatch = formattedText.match(/^(Okay, let's tackle.*?)\n\n/s);
+      let reasoning = '';
+      let mainContent = formattedText;
+      
+      if (reasoningMatch) {
+        reasoning = reasoningMatch[1];
+        mainContent = formattedText.replace(reasoning + '\n\n', '');
+      }
+      
+      // Format reasoning with a distinct style
+      let formattedReasoning = reasoning 
+        ? `<div class="chain-of-thought">
+             <i class="fas fa-brain"></i> 
+             <span class="reasoning-label">Behind the Scenes</span>
+             <p>${reasoning.replace(/\n/g, '<br>')}</p>
+           </div>`
+        : '';
+      
+      // Remove formatting that causes orange text and broken paragraphs
+      mainContent = mainContent.replace(/\[\d+\]/g, '');  // Remove source number references
+      
+      // Format main content
       // Format section headers
-      formattedText = formattedText.replace(/(\d+\.\s*[^:]+:)/g, '<h3>$1</h3>');
+      mainContent = mainContent.replace(/(\d+\.\s*[^:]+:)/g, '<h3>$1</h3>');
+      
+      // Format paragraphs
+      mainContent = mainContent.split('\n\n')
+        .map(para => `<p>${para.trim()}</p>`)
+        .join('');
       
       // Format lists
-      formattedText = formattedText.replace(/•\s([^•\n]+)/g, '<li>$1</li>');
-      formattedText = formattedText.replace(/<li>/g, '<ul><li>').replace(/<\/li>\n/g, '</li></ul>');
+      mainContent = mainContent.replace(/•\s([^•\n]+)/g, '<li>$1</li>');
+      mainContent = mainContent.replace(/<li>/g, '<ul><li>').replace(/<\/li>\n/g, '</li></ul>');
       
-      // Add spacing between paragraphs
-      formattedText = formattedText.replace(/\n\n/g, '</p><p>');
-      
-      // Wrap in sections
-      const sections = formattedText.split('<h3>');
-      let sectionedHtml = '';
-      
-      sections.forEach((section, index) => {
-        if (index === 0 && !section.includes('</h3>')) {
-          sectionedHtml += `<div class="section">${section}</div>`;
-        } else if (index > 0) {
-          sectionedHtml += `<div class="result-section"><h3>${section}</div>`;
-        }
-      });
-      
-      // Format the results
-      resultsDiv.innerHTML = `<div class="qualification-results">${sectionedHtml}</div>`;
+      // Combine reasoning and results
+      resultsDiv.innerHTML = `
+        <div class="qualification-results">
+          ${formattedReasoning}
+          <div class="results-content">${mainContent}</div>
+        </div>
+      `;
     }
     
     // Add event listener for Enter key
