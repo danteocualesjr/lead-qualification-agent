@@ -3,21 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lead Qualification Agent</title>
+  <title>LEADSCAPE AI</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
   <div class="container">
-    <h1>Lead Qualification Agent</h1>
-    <div class="form-container">
-      <input type="text" id="companyName" placeholder="Enter company name...">
-      <button onclick="qualifyLead()">Qualify Lead</button>
+    <header>
+      <div class="title">LEADSCAPE AI</div>
+    </header>
+    
+    <div class="search-container">
+      <div class="search-bar">
+        <input type="text" id="companyName" class="search-input" placeholder="Enter company name (e.g., OpenAI, Perplexity, Anthropic)">
+        <button onclick="qualifyLead()" class="search-button">Deep Research</button>
+      </div>
     </div>
+    
     <div class="results-container">
-      <h2>Qualification Results</h2>
+      <h2 class="results-title">Qualification Results</h2>
       <div id="results">
         <!-- Results will appear here -->
+        <div class="empty-state">
+          Enter a company name above to see qualification results
+        </div>
       </div>
+    </div>
+    
+    <div class="footer">
+      Powered by Perplexity Sonar API • Created with ❤️
     </div>
   </div>
 
@@ -26,7 +40,7 @@
       const companyName = document.getElementById('companyName').value;
       if (!companyName) return;
       
-      document.getElementById('results').innerHTML = '<p>Researching... This may take a moment.</p>';
+      document.getElementById('results').innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Researching... This may take a moment.</div>';
       
       try {
         const response = await fetch('/qualify-lead', {
@@ -40,7 +54,7 @@
         const data = await response.json();
         displayResults(data);
       } catch (error) {
-        document.getElementById('results').innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        document.getElementById('results').innerHTML = `<p class="error"><i class="fas fa-exclamation-triangle"></i> Error: ${error.message}</p>`;
       }
     }
     
@@ -48,7 +62,7 @@
       const resultsDiv = document.getElementById('results');
       
       if (data.error) {
-        let errorMessage = `<p class="error">Error: ${data.error}</p>`;
+        let errorMessage = `<p class="error"><i class="fas fa-exclamation-triangle"></i> Error: ${data.error}</p>`;
         if (data.details) {
           errorMessage += `<p>Details: ${JSON.stringify(data.details)}</p>`;
         }
@@ -56,9 +70,41 @@
         return;
       }
       
-      // Format the results from the API
-      resultsDiv.innerHTML = `<div class="qualification-results">${data.result.replace(/\n/g, '<br>')}</div>`;
+      // Process and format the result text
+      let formattedText = data.result;
+      
+      // Format section headers
+      formattedText = formattedText.replace(/(\d+\.\s*[^:]+:)/g, '<h3>$1</h3>');
+      
+      // Format lists
+      formattedText = formattedText.replace(/•\s([^•\n]+)/g, '<li>$1</li>');
+      formattedText = formattedText.replace(/<li>/g, '<ul><li>').replace(/<\/li>\n/g, '</li></ul>');
+      
+      // Add spacing between paragraphs
+      formattedText = formattedText.replace(/\n\n/g, '</p><p>');
+      
+      // Wrap in sections
+      const sections = formattedText.split('<h3>');
+      let sectionedHtml = '';
+      
+      sections.forEach((section, index) => {
+        if (index === 0 && !section.includes('</h3>')) {
+          sectionedHtml += `<div class="section">${section}</div>`;
+        } else if (index > 0) {
+          sectionedHtml += `<div class="result-section"><h3>${section}</div>`;
+        }
+      });
+      
+      // Format the results
+      resultsDiv.innerHTML = `<div class="qualification-results">${sectionedHtml}</div>`;
     }
+    
+    // Add event listener for Enter key
+    document.getElementById('companyName').addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        qualifyLead();
+      }
+    });
   </script>
 </body>
 </html>
