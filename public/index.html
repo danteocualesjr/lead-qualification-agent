@@ -45,10 +45,16 @@
     }
     
     function displayResults(data) {
-      // Format and display the results from the API
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-    }
+  const resultsDiv = document.getElementById('results');
+  
+  if (data.error) {
+    resultsDiv.innerHTML = `<p class="error">Error: ${data.message || data.error}</p>`;
+    return;
+  }
+  
+  // Format the results from the API
+  resultsDiv.innerHTML = `<div class="qualification-results">${data.result.replace(/\n/g, '<br>')}</div>`;
+}
   </script>
 </body>
 </html>
