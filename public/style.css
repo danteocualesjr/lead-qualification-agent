@@ -168,21 +168,26 @@
   /* Chain of Thought Styling */
   .chain-of-thought {
     background-color: #f0f4f8;
-    border-left: 4px solid var(--primary);
+    border-left: 5px solid var(--primary);
     padding: 15px;
     margin-bottom: 20px;
     border-radius: 0 8px 8px 0;
+  }
+
+  .chain-of-thought .reasoning-label {
+    font-weight: bold;
+    color: var(--primary);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .chain-of-thought .reasoning-text {
     font-style: italic;
     color: #2c3e50;
+    line-height: 1.6;
   }
-  
-  .chain-of-thought .reasoning-label {
-    font-weight: 600;
-    color: var(--primary);
-    margin-left: 10px;
-    text-transform: uppercase;
-  }
-  
+
   .chain-of-thought .fa-brain {
     color: var(--primary);
     margin-right: 10px;

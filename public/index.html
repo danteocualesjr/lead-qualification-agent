@@ -70,11 +70,10 @@
         return;
       }
       
-      // New logic to separate chain-of-thought from final results
       let formattedText = data.result;
       
       // Detect and format chain-of-thought reasoning
-      const reasoningMatch = formattedText.match(/^(Okay, let's tackle.*?)\n\n/s);
+      const reasoningMatch = formattedText.match(/^(Okay,.*?)\n\n/s);
       let reasoning = '';
       let mainContent = formattedText;
       
@@ -87,16 +86,15 @@
       let formattedReasoning = reasoning 
         ? `<div class="chain-of-thought">
              <i class="fas fa-brain"></i> 
-             <span class="reasoning-label">Behind the Scenes</span>
-             <p>${reasoning.replace(/\n/g, '<br>')}</p>
+             <span class="reasoning-label">Investigative Thought Process</span>
+             <p class="reasoning-text">${reasoning.replace(/\n/g, '<br>')}</p>
            </div>`
         : '';
       
-      // Remove formatting that causes orange text and broken paragraphs
-      mainContent = mainContent.replace(/\[\d+\]/g, '');  // Remove source number references
+      // Remove formatting issues
+      mainContent = mainContent.replace(/\[\d+\]/g, '');
       
       // Format main content
-      // Format section headers
       mainContent = mainContent.replace(/(\d+\.\s*[^:]+:)/g, '<h3>$1</h3>');
       
       // Format paragraphs
