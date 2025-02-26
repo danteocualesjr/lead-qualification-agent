@@ -52,7 +52,7 @@ app.post('/qualify-lead', async (req, res) => {
     
     // Call Perplexity API
     const response = await axios.post('https://api.perplexity.ai/chat/completions', {
-      model: "sonar-medium-chat",
+      model: "mixtral-8x7b-instruct",
       messages: [
         {
           role: "system",
