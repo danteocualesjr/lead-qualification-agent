@@ -34,7 +34,7 @@
     </main>
 
     <footer class="app-footer">
-      Powered by Perplexity Sonar API • Created with ❤️
+      Powered by Perplexity's Sonar • Created with ❤️
     </footer>
   </div>
 
@@ -80,7 +80,12 @@
         let matches;
         
         while ((matches = sourceRegex.exec(content)) !== null) {
-          sources.push(matches[1]);
+          try {
+            const url = new URL(matches[1]);
+            sources.push(matches[1]);
+          } catch (error) {
+            console.warn('Invalid URL:', matches[1]);
+          }
         }
 
         // Remove source links from the main content
@@ -128,13 +133,21 @@
         <div class="sources-section">
           <h3>Sources</h3>
           <ul class="sources-list">
-            ${processedContent.sources.map(source => `
-              <li>
-                <a href="${source}" target="_blank" rel="noopener noreferrer">
-                  <i class="fas fa-external-link-alt"></i> ${new URL(source).hostname}
-                </a>
-              </li>
-            `).join('')}
+            ${processedContent.sources.map(source => {
+              try {
+                const hostname = new URL(source).hostname;
+                return `
+                  <li>
+                    <a href="${source}" target="_blank" rel="noopener noreferrer">
+                      <i class="fas fa-external-link-alt"></i> ${hostname}
+                    </a>
+                  </li>
+                `;
+              } catch (error) {
+                console.warn('Invalid URL in sources:', source);
+                return '';
+              }
+            }).join('')}
           </ul>
         </div>
       ` : '';
