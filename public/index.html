@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead Qualification Agent</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Lead Qualification Agent</h1>
+    <div class="form-container">
+      <input type="text" id="companyName" placeholder="Enter company name...">
+      <button onclick="qualifyLead()">Qualify Lead</button>
+    </div>
+    <div class="results-container">
+      <h2>Qualification Results</h2>
+      <div id="results">
+        <!-- Results will appear here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function qualifyLead() {
+      const companyName = document.getElementById('companyName').value;
+      if (!companyName) return;
+      
+      document.getElementById('results').innerHTML = '<p>Researching... This may take a moment.</p>';
+      
+      try {
+        const response = await fetch('/qualify-lead', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ companyName })
+        });
+        
+        const data = await response.json();
+        displayResults(data);
+      } catch (error) {
+        document.getElementById('results').innerHTML = `<p class="error">Error: ${error.message}</p>`;
+      }
+    }
+    
+    function displayResults(data) {
+      // Format and display the results from the API
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    }
+  </script>
+</body>
+</html>
