@@ -1,0 +1,23 @@
+{
+    "name": "lead-qualification-agent",
+    "version": "1.0.0",
+    "description": "A custom research agent for lead qualification using Perplexity Sonar API",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "lead",
+        "qualification",
+        "perplexity",
+        "sonar"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^1.8.0",
+        "dotenv": "^16.4.7",
+        "express": "^4.21.2"
+    }
+}
