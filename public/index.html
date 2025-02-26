@@ -3,36 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LEADSCAPE AI</title>
+  <title>Leadscape AI</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
   <div class="container">
-    <header>
-      <div class="title">LEADSCAPE AI</div>
-    </header>
-    
-    <div class="search-container">
-      <div class="search-bar">
-        <input type="text" id="companyName" class="search-input" placeholder="Enter company name (e.g., OpenAI, Perplexity, Anthropic)">
-        <button onclick="qualifyLead()" class="search-button">Deep Research</button>
+    <nav>
+      <div class="nav-content">
+        <button class="sign-in-btn">Sign In</button>
       </div>
-    </div>
-    
-    <div class="results-container">
-      <h2 class="results-title">Qualification Results</h2>
-      <div id="results">
-        <!-- Results will appear here -->
+    </nav>
+
+    <main>
+      <div class="main-content">
+        <h1>Leadscape AI</h1>
+        <p class="subtitle">Which company would you like to qualify?</p>
+
+        <div class="search-wrapper">
+          <input 
+            type="text" 
+            id="companyName" 
+            class="company-input" 
+            placeholder="Enter company name (e.g., OpenAI, Perplexity, Anthropic)"
+          >
+          <button onclick="qualifyLead()" class="research-btn">Deep Research</button>
+        </div>
+
+        <div class="pro-tip">
+          <h3>Pro Tip</h3>
+          <p>Search for any company to get detailed insights about their size, industry, tech stack, funding, and potential fit for your ideal customer profile.</p>
+        </div>
+      </div>
+
+      <div id="results" class="results-container">
         <div class="empty-state">
           Enter a company name above to see qualification results
         </div>
       </div>
-    </div>
-    
-    <div class="footer">
-      Powered by Perplexity Sonar API • Created with ❤️
-    </div>
+    </main>
   </div>
 
   <script>
@@ -72,7 +81,7 @@
       
       let formattedText = data.result;
       
-      // Detect and format chain-of-thought reasoning
+      // Similar formatting logic as before
       const reasoningMatch = formattedText.match(/^(Okay,.*?)\n\n/s);
       let reasoning = '';
       let mainContent = formattedText;
@@ -82,7 +91,6 @@
         mainContent = formattedText.replace(reasoning + '\n\n', '');
       }
       
-      // Format reasoning with a distinct style
       let formattedReasoning = reasoning 
         ? `<div class="chain-of-thought">
              <i class="fas fa-brain"></i> 
@@ -91,22 +99,16 @@
            </div>`
         : '';
       
-      // Remove formatting issues
       mainContent = mainContent.replace(/\[\d+\]/g, '');
-      
-      // Format main content
       mainContent = mainContent.replace(/(\d+\.\s*[^:]+:)/g, '<h3>$1</h3>');
       
-      // Format paragraphs
       mainContent = mainContent.split('\n\n')
         .map(para => `<p>${para.trim()}</p>`)
         .join('');
       
-      // Format lists
       mainContent = mainContent.replace(/•\s([^•\n]+)/g, '<li>$1</li>');
       mainContent = mainContent.replace(/<li>/g, '<ul><li>').replace(/<\/li>\n/g, '</li></ul>');
       
-      // Combine reasoning and results
       resultsDiv.innerHTML = `
         <div class="qualification-results">
           ${formattedReasoning}
@@ -115,7 +117,6 @@
       `;
     }
     
-    // Add event listener for Enter key
     document.getElementById('companyName').addEventListener('keypress', function(event) {
       if (event.key === 'Enter') {
         qualifyLead();
