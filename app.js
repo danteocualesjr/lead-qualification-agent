@@ -33,6 +33,8 @@ app.get('/test-api', async (req, res) => {
 
 // API route to query Perplexity Sonar
 app.post('/qualify-lead', async (req, res) => {
+  const startTime = Date.now(); // Record start time
+  
   try {
     const { companyName } = req.body;
     
@@ -41,16 +43,25 @@ app.post('/qualify-lead', async (req, res) => {
     }
     
     // Create the prompt for lead qualification
-    const promptText = `Research ${companyName} and provide the following information:
-    1. Company size (employees and revenue if available)
-    2. Industry and sub-industry
-    3. Current tech stack, especially any CRM or sales tools
-    4. Recent funding or financial status
-    5. Growth indicators (hiring, expansion, new products)
-    6. Key decision-makers in sales/marketing
-    7. Potential pain points that our sales solution could address`;
+    const promptText = `Research ${companyName} with detailed citations. For each key point, include a link to the source.
+
+Provide information on:
+1. Company size (employees and revenue if available)
+2. Industry and sub-industry
+3. Current tech stack, especially any CRM or sales tools
+4. Recent funding or financial status
+5. Growth indicators (hiring, expansion, new products)
+6. Key decision-makers in sales/marketing
+7. Potential pain points that our sales solution could address
+
+FORMAT: After each significant statement, include [Source: URL] in square brackets.
+
+At the end of your response, list:
+- Total number of sources used
+- A comprehensive list of sources with their URLs
+`;
     
-    // Call Perplexity API with correct model from documentation
+    // Call Perplexity API
     const response = await axios.post('https://api.perplexity.ai/chat/completions', {
       model: "sonar-deep-research",
       messages: [
@@ -70,10 +81,24 @@ app.post('/qualify-lead', async (req, res) => {
       }
     });
     
-    // Extract the assistant's message from the response
+    // Calculate research time
+    const endTime = Date.now();
+    const researchDuration = endTime - startTime;
+    const minutes = Math.floor(researchDuration / 60000);
+    const seconds = Math.floor((researchDuration % 60000) / 1000);
+
+    // Extract the assistant's message and source count
     const result = response.data.choices[0].message.content;
     
-    res.json({ result });
+    // Extract source count (assuming it's mentioned at the end)
+    const sourceCountMatch = result.match(/Total number of sources used:\s*(\d+)/i);
+    const sourceCount = sourceCountMatch ? parseInt(sourceCountMatch[1]) : 0;
+    
+    res.json({ 
+      result, 
+      researchTime: { minutes, seconds },
+      sourceCount 
+    });
   } catch (error) {
     console.error('Error details:', error.response ? error.response.data : error.message);
     res.status(500).json({ 

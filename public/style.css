@@ -29,33 +29,6 @@
     padding: 0 20px;
   }
   
-  /* Navigation */
-  nav {
-    background-color: var(--white);
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  .nav-content {
-    display: flex;
-    justify-content: flex-end;
-    padding: 15px 0;
-  }
-  
-  .sign-in-btn {
-    background-color: var(--primary);
-    color: var(--white);
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .sign-in-btn:hover {
-    background-color: var(--primary-light);
-  }
-  
-  /* Main Content */
   main {
     padding-top: 40px;
   }
@@ -130,18 +103,8 @@
     color: var(--text-light);
   }
   
-  /* Results Container */
   .results-container {
-    background-color: var(--white);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 20px;
     margin-top: 20px;
-  }
-  
-  .empty-state {
-    color: var(--text-light);
-    text-align: center;
   }
   
   .loading {
@@ -158,7 +121,6 @@
     border-radius: 8px;
   }
   
-  /* Chain of Thought Styling */
   .chain-of-thought {
     background-color: #f0f4f8;
     border-left: 5px solid var(--primary);
@@ -186,7 +148,63 @@
     margin-right: 10px;
   }
   
-  /* Responsive Adjustments */
+  .research-meta {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f0f4f8;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    color: var(--text-light);
+  }
+  
+  .research-meta i {
+    margin-right: 8px;
+    color: var(--primary);
+  }
+  
+  .sources-section {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    border-top: 1px solid var(--border-color);
+    padding: 15px;
+  }
+  
+  .sources-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .sources-list li {
+    margin-bottom: 10px;
+  }
+  
+  .sources-list a {
+    color: var(--primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
+  }
+  
+  .sources-list a:hover {
+    color: var(--primary-light);
+    text-decoration: underline;
+  }
+  
+  .sources-list a i {
+    margin-right: 10px;
+    color: var(--text-light);
+  }
+  
+  .app-footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    color: var(--text-light);
+    font-size: 14px;
+  }
+  
   @media (max-width: 600px) {
     .search-wrapper {
       flex-direction: column;

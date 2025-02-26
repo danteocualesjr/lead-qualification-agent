@@ -9,12 +9,6 @@
 </head>
 <body>
   <div class="container">
-    <nav>
-      <div class="nav-content">
-        <button class="sign-in-btn">Sign In</button>
-      </div>
-    </nav>
-
     <main>
       <div class="main-content">
         <h1>Leadscape AI</h1>
@@ -36,12 +30,12 @@
         </div>
       </div>
 
-      <div id="results" class="results-container">
-        <div class="empty-state">
-          Enter a company name above to see qualification results
-        </div>
-      </div>
+      <div id="results" class="results-container"></div>
     </main>
+
+    <footer class="app-footer">
+      Powered by Perplexity Sonar API • Created with ❤️
+    </footer>
   </div>
 
   <script>
@@ -78,10 +72,25 @@
         resultsDiv.innerHTML = errorMessage;
         return;
       }
+
+      // Function to extract and format sources
+      function extractSources(content) {
+        const sourceRegex = /\[Source:\s*(https?:\/\/[^\]]+)\]/g;
+        const sources = [];
+        let matches;
+        
+        while ((matches = sourceRegex.exec(content)) !== null) {
+          sources.push(matches[1]);
+        }
+
+        // Remove source links from the main content
+        content = content.replace(/\[Source:\s*https?:\/\/[^\]]+\]/g, '');
+
+        return { content, sources };
+      }
       
       let formattedText = data.result;
       
-      // Similar formatting logic as before
       const reasoningMatch = formattedText.match(/^(Okay,.*?)\n\n/s);
       let reasoning = '';
       let mainContent = formattedText;
@@ -108,11 +117,46 @@
       
       mainContent = mainContent.replace(/•\s([^•\n]+)/g, '<li>$1</li>');
       mainContent = mainContent.replace(/<li>/g, '<ul><li>').replace(/<\/li>\n/g, '</li></ul>');
+
+      // Process the main content to extract sources
+      const processedContent = extractSources(mainContent);
+      mainContent = processedContent.content;
+
+      // Create source links HTML
+      const sourceLinksHTML = processedContent.sources.length > 0 
+        ? `
+        <div class="sources-section">
+          <h3>Sources</h3>
+          <ul class="sources-list">
+            ${processedContent.sources.map(source => `
+              <li>
+                <a href="${source}" target="_blank" rel="noopener noreferrer">
+                  <i class="fas fa-external-link-alt"></i> ${new URL(source).hostname}
+                </a>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      ` : '';
+      
+      // Add research time and source count display
+      const researchMetaHTML = `
+        <div class="research-meta">
+          <span class="research-time">
+            <i class="fas fa-clock"></i> Research Time: ${data.researchTime.minutes} min ${data.researchTime.seconds} sec
+          </span>
+          <span class="source-count">
+            <i class="fas fa-book-open"></i> Sources: ${data.sourceCount}
+          </span>
+        </div>
+      `;
       
       resultsDiv.innerHTML = `
         <div class="qualification-results">
+          ${researchMetaHTML}
           ${formattedReasoning}
           <div class="results-content">${mainContent}</div>
+          ${sourceLinksHTML}
         </div>
       `;
     }
