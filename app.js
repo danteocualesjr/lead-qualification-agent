@@ -40,7 +40,7 @@ app.post('/qualify-lead', async (req, res) => {
     
     // Call Perplexity API with reduced timeout
     const response = await axios.post('https://api.perplexity.ai/chat/completions', {
-      model: "sonar-small-query",
+      model: "sonar-deep-research", // Corrected model name
       messages: [
         {
           role: "system",
