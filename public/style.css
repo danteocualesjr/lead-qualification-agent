@@ -377,3 +377,62 @@
       display: none;
     }
   }
+  
+  /* History page styles */
+  .history-list {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .history-item {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .timestamp {
+    color: var(--text-light);
+    font-size: 0.9rem;
+  }
+  
+  .preview {
+    color: var(--text-light);
+    margin-bottom: 15px;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .action-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+  }
+  
+  .action-btn:hover {
+    background: var(--background);
+    color: var(--primary);
+  }
+  
+  .empty-state {
+    text-align: center;
+    color: var(--text-light);
+    padding: 40px;
+  }

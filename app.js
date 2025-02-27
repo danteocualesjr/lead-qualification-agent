@@ -17,6 +17,39 @@ app.get('/', (req, res) => {
  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Routes for new pages
+app.get('/history', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'history.html'));
+});
+
+app.get('/saved', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'saved.html'));
+});
+
+app.get('/settings', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'settings.html'));
+});
+
+// API routes for functionality
+app.get('/api/history', async (req, res) => {
+    try {
+        // Here you would typically fetch from a database
+        // For now, returning mock data
+        const history = [
+            {
+                id: '1',
+                companyName: 'OpenAI',
+                timestamp: new Date(),
+                preview: 'AI research and deployment company...'
+            },
+            // Add more mock items
+        ];
+        res.json(history);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to load history' });
+    }
+});
+
 // API route to query Perplexity Sonar
 app.post('/qualify-lead', async (req, res) => {
  const startTime = Date.now();
