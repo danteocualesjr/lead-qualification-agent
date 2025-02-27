@@ -26,38 +26,42 @@
   }
   
   .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 20px;
+    max-width: 1200px;
     margin-left: var(--sidebar-width);
+    padding: 40px 80px;
     transition: margin-left 0.3s ease;
+    min-height: 100vh;
   }
   
   main {
-    padding-top: 40px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding-top: 60px;
   }
   
   .main-content {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
   }
   
   h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
+    font-size: 2.8rem;
+    margin-bottom: 20px;
     color: var(--text-dark);
   }
   
   .subtitle {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     color: var(--text-light);
-    margin-bottom: 20px;
+    margin-bottom: 30px;
   }
   
   .search-wrapper {
+    max-width: 650px;
+    margin: 0 auto 30px;
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 12px;
   }
   
   .company-input {
@@ -286,6 +290,23 @@
   }
   
   @media (max-width: 768px) {
+    .container {
+      margin-left: var(--sidebar-collapsed-width);
+      padding: 20px;
+    }
+    
+    main {
+      padding-top: 30px;
+    }
+    
+    h1 {
+      font-size: 2.2rem;
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+    }
+    
     .sidebar {
       width: var(--sidebar-collapsed-width);
     }
