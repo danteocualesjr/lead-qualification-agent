@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - Leadscape AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <!-- Same sidebar as index.html but with "History" active -->
+        <button id="sidebar-toggle" class="sidebar-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="sidebar-content">
+            <h2>Leadscape AI</h2>
+            <nav>
+                <a href="/" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/history" class="nav-item active">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+                <a href="/saved" class="nav-item">
+                    <i class="fas fa-bookmark"></i>
+                    <span>Saved Research</span>
+                </a>
+                <a href="/settings" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container content">
+        <main>
+            <h1>Research History</h1>
+            <div id="history-list" class="history-list">
+                <!-- History items will be populated here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sidebar toggle functionality
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const content = document.querySelector('.content');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            content.classList.toggle('expanded');
+        });
+
+        // Load and display history
+        async function loadHistory() {
+            try {
+                const response = await fetch('/api/history');
+                const history = await response.json();
+                displayHistory(history);
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        function displayHistory(history) {
+            const historyList = document.getElementById('history-list');
+            if (history.length === 0) {
+                historyList.innerHTML = '<p class="empty-state">No research history yet</p>';
+                return;
+            }
+
+            const historyHTML = history.map(item => `
+                <div class="history-item">
+                    <div class="history-header">
+                        <h3>${item.companyName}</h3>
+                        <span class="timestamp">${new Date(item.timestamp).toLocaleString()}</span>
+                    </div>
+                    <p class="preview">${item.preview}</p>
+                    <div class="actions">
+                        <button onclick="viewDetails('${item.id}')" class="action-btn">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button onclick="saveResearch('${item.id}')" class="action-btn">
+                            <i class="fas fa-bookmark"></i> Save
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            historyList.innerHTML = historyHTML;
+        }
+
+        // Load history when page loads
+        loadHistory();
+    </script>
+</body>
+</html> 

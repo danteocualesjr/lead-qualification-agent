@@ -68,10 +68,30 @@
   </div>
 
   <script>
-    // Sidebar toggle functionality
+    // Improved sidebar toggle functionality
     document.getElementById('sidebar-toggle').addEventListener('click', function() {
-      document.getElementById('sidebar').classList.toggle('collapsed');
-      document.querySelector('.content').classList.toggle('expanded');
+      const sidebar = document.getElementById('sidebar');
+      const content = document.querySelector('.content');
+      
+      // Toggle both classes
+      sidebar.classList.toggle('collapsed');
+      content.classList.toggle('expanded');
+      
+      // Store the state in localStorage (optional, for persistence)
+      const isCollapsed = sidebar.classList.contains('collapsed');
+      localStorage.setItem('sidebarCollapsed', isCollapsed);
+    });
+
+    // Optional: Restore sidebar state on page load
+    window.addEventListener('load', function() {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.querySelector('.content');
+      const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+      
+      if (isCollapsed) {
+        sidebar.classList.add('collapsed');
+        content.classList.add('expanded');
+      }
     });
 
     async function qualifyLead() {
