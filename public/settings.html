@@ -126,14 +126,60 @@
             }
         }
 
-        // Theme switching
-        document.querySelectorAll('.theme-btn').forEach(btn => {
+        // Theme management
+        const themeButtons = document.querySelectorAll('.theme-btn');
+        
+        // Function to set theme
+        function setTheme(theme) {
+            if (theme === 'system') {
+                // Check system preference
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+            
+            // Save theme preference
+            localStorage.setItem('theme', theme);
+            
+            // Update active button
+            themeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === theme);
+            });
+        }
+
+        // Add click handlers to theme buttons
+        themeButtons.forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                // Implement theme switching logic here
+                setTheme(btn.dataset.theme);
             });
         });
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', e => {
+                if (localStorage.getItem('theme') === 'system') {
+                    setTheme('system');
+                }
+            });
+
+        // Initialize theme
+        function initializeTheme() {
+            const theme = localStorage.getItem('theme') || 'system';
+            if (theme === 'system') {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+        }
+
+        // Call on page load
+        initializeTheme();
 
         // Clear history confirmation
         function clearHistory() {
