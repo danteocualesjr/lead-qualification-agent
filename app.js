@@ -56,7 +56,7 @@ app.post('/qualify-lead', async (req, res) => {
         'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
         'Content-Type': 'application/json'
       },
-      timeout: 15000 // Reduced to 15 seconds
+      timeout: 300000 // 5 minutes (300 seconds)
     });
     
     // Calculate research time
