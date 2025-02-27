@@ -142,6 +142,32 @@ app.post('/qualify-lead', async (req, res) => {
  }
 });
 
+// Add this new route with your other API routes
+app.get('/api/saved', async (req, res) => {
+    try {
+        // Mock data - replace with actual database query
+        const saved = [
+            {
+                id: '1',
+                companyName: 'OpenAI',
+                savedAt: new Date(),
+                preview: 'AI research and deployment company...',
+                folder: 'AI Companies'
+            },
+            {
+                id: '2',
+                companyName: 'Anthropic',
+                savedAt: new Date(Date.now() - 86400000), // 1 day ago
+                preview: 'AI safety and research company...',
+                folder: 'AI Companies'
+            }
+        ];
+        res.json(saved);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to load saved research' });
+    }
+});
+
 // Start the server
 app.listen(PORT, () => {
  console.log(`Server running on port ${PORT}`);

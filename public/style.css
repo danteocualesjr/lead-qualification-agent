@@ -436,3 +436,80 @@
     color: var(--text-light);
     padding: 40px;
   }
+  
+  /* Add these new styles for saved research page */
+  .saved-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .saved-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .sort-select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--white);
+    color: var(--text-dark);
+    cursor: pointer;
+  }
+  
+  .saved-item {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease;
+  }
+  
+  .saved-item:hover {
+    transform: translateY(-2px);
+  }
+  
+  .saved-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    color: var(--text-light);
+    font-size: 0.9rem;
+  }
+  
+  .folder-tag {
+    background-color: var(--background);
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+  }
+  
+  .empty-state i {
+    margin-bottom: 15px;
+    color: var(--primary);
+  }
+  
+  .empty-state-subtitle {
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .action-btn.delete {
+    color: #dc3545;
+  }
+  
+  .action-btn.delete:hover {
+    background-color: #dc35451a;
+  }
