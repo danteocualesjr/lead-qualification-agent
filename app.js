@@ -14,19 +14,19 @@ app.use(express.static(path.join(__dirname, 'public'))); // Ensure static files 
 
 // Serve the HTML form
 app.get('/', (req, res) => {
- res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Routes for new pages
-app.get('/history', (req, res) => {
+app.get('/history.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'history.html'));
 });
 
-app.get('/saved', (req, res) => {
+app.get('/saved.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'saved.html'));
 });
 
-app.get('/settings', (req, res) => {
+app.get('/settings.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'settings.html'));
 });
 
