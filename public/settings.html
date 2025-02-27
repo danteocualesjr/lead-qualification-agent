@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Leadscape AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <button id="sidebar-toggle" class="sidebar-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="sidebar-content">
+            <h2>Leadscape AI</h2>
+            <nav>
+                <a href="/" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/history.html" class="nav-item">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+                <a href="/saved.html" class="nav-item">
+                    <i class="fas fa-bookmark"></i>
+                    <span>Saved Research</span>
+                </a>
+                <a href="/settings.html" class="nav-item active">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container content">
+        <main>
+            <h1>Settings</h1>
+            
+            <div class="settings-section">
+                <h2><i class="fas fa-key"></i> API Configuration</h2>
+                <div class="setting-item">
+                    <label for="api-key">Perplexity API Key</label>
+                    <div class="api-key-input">
+                        <input type="password" id="api-key" value="••••••••••••••••">
+                        <button class="action-btn" onclick="toggleApiKey()">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn" onclick="updateApiKey()">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2><i class="fas fa-paint-brush"></i> Appearance</h2>
+                <div class="setting-item">
+                    <label>Theme</label>
+                    <div class="theme-options">
+                        <button class="theme-btn active" data-theme="light">
+                            <i class="fas fa-sun"></i> Light
+                        </button>
+                        <button class="theme-btn" data-theme="dark">
+                            <i class="fas fa-moon"></i> Dark
+                        </button>
+                        <button class="theme-btn" data-theme="system">
+                            <i class="fas fa-laptop"></i> System
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2><i class="fas fa-history"></i> History Settings</h2>
+                <div class="setting-item">
+                    <label class="switch-label">
+                        <span>Save Research History</span>
+                        <div class="switch">
+                            <input type="checkbox" id="save-history" checked>
+                            <span class="slider"></span>
+                        </div>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <button class="action-btn danger" onclick="clearHistory()">
+                        <i class="fas fa-trash"></i> Clear All History
+                    </button>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2><i class="fas fa-file-export"></i> Data Export</h2>
+                <div class="setting-item">
+                    <button class="action-btn" onclick="exportData('history')">
+                        <i class="fas fa-download"></i> Export History
+                    </button>
+                    <button class="action-btn" onclick="exportData('saved')">
+                        <i class="fas fa-download"></i> Export Saved Research
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sidebar toggle functionality
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const content = document.querySelector('.content');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            content.classList.toggle('expanded');
+        });
+
+        // API Key toggle
+        function toggleApiKey() {
+            const apiKeyInput = document.getElementById('api-key');
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+            } else {
+                apiKeyInput.type = 'password';
+            }
+        }
+
+        // Theme switching
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                // Implement theme switching logic here
+            });
+        });
+
+        // Clear history confirmation
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all research history? This cannot be undone.')) {
+                // Implement clear history logic here
+            }
+        }
+
+        // Export data
+        function exportData(type) {
+            // Implement export logic here
+            console.log(`Exporting ${type} data...`);
+        }
+
+        // Save API key
+        async function updateApiKey() {
+            const apiKey = document.getElementById('api-key').value;
+            try {
+                const response = await fetch('/api/settings/apikey', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ apiKey })
+                });
+                if (response.ok) {
+                    alert('API key updated successfully');
+                }
+            } catch (error) {
+                console.error('Error updating API key:', error);
+                alert('Failed to update API key');
+            }
+        }
+    </script>
+</body>
+</html> 

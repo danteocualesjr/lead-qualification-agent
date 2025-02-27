@@ -168,6 +168,18 @@ app.get('/api/saved', async (req, res) => {
     }
 });
 
+// Add this new route with your other API routes
+app.post('/api/settings/apikey', async (req, res) => {
+    try {
+        const { apiKey } = req.body;
+        // Here you would typically save this to a secure storage
+        // For now, just send back success
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update API key' });
+    }
+});
+
 // Start the server
 app.listen(PORT, () => {
  console.log(`Server running on port ${PORT}`);
