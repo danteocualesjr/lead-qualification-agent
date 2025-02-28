@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leadscape AI</title>
+  <!-- Load stylesheets -->
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
+  <!-- Sidebar navigation menu -->
   <div class="app-container">
     <aside class="sidebar">
       <div class="sidebar-header">
@@ -68,37 +70,27 @@
     </main>
   </div>
 
+  <footer class="app-footer">
+    Powered by Perplexity's Sonar • Created with ❤️
+  </footer>
+
   <script>
-    function showSection(section) {
-      // Remove active class from all items
-      document.querySelectorAll('.sidebar li').forEach(li => {
-        li.classList.remove('active');
-      });
+    // Toggle sidebar visibility and store preference
+    document.getElementById('sidebar-toggle').addEventListener('click', function() {
+      // ... existing code ...
+    });
 
-      // Add active class to selected item
-      event.currentTarget.closest('li').classList.add('active');
+    // Restore sidebar state when page loads
+    window.addEventListener('load', function() {
+      // ... existing code ...
+    });
 
-      // You can add more sophisticated section switching logic here
-      switch(section) {
-        case 'research':
-          // Show research section (current view)
-          break;
-        case 'history':
-          alert('Research History coming soon!');
-          break;
-        case 'saved':
-          alert('Saved Companies coming soon!');
-          break;
-        case 'settings':
-          alert('Settings coming soon!');
-          break;
-      }
-    }
-
+    // Main function to send research request to backend
     async function qualifyLead() {
       const companyName = document.getElementById('companyName').value;
       if (!companyName) return;
       
+      // Show loading spinner while researching
       document.getElementById('results').innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Researching... This may take a moment.</div>';
       
       try {
@@ -117,9 +109,11 @@
       }
     }
     
+    // Format and display research results
     function displayResults(data) {
       const resultsDiv = document.getElementById('results');
       
+      // Handle error cases
       if (data.error) {
         let errorMessage = `<p class="error"><i class="fas fa-exclamation-triangle"></i> Error: ${data.error}</p>`;
         if (data.details) {
@@ -129,6 +123,7 @@
         return;
       }
 
+      // Helper function to extract source URLs from content
       function extractSources(content) {
         const sourceRegex = /\[Source:\s*(https?:\/\/[^\]]+)\]/g;
         const sources = [];
@@ -143,6 +138,7 @@
       
       let formattedText = data.result;
       
+      // Extract and format the AI's reasoning process if present
       const reasoningMatch = formattedText.match(/^(Okay,.*?)\n\n/s);
       let reasoning = '';
       let mainContent = formattedText;
@@ -160,9 +156,11 @@
            </div>`
         : '';
       
+      // Format the main content with proper HTML structure
       mainContent = mainContent.replace(/\[\d+\]/g, '');
       mainContent = mainContent.replace(/(\d+\.\s*[^:]+:)/g, '<h3>$1</h3>');
       
+      // Convert paragraphs and bullet points to HTML
       mainContent = mainContent.split('\n\n')
         .map(para => `<p>${para.trim()}</p>`)
         .join('');
@@ -170,7 +168,12 @@
       mainContent = mainContent.replace(/•\s([^•\n]+)/g, '<li>$1</li>');
       mainContent = mainContent.replace(/<li>/g, '<ul><li>').replace(/<\/li>\n/g, '</li></ul>');
 
-      const sources = extractSources(formattedText);
+      // Extract and format source links
+      const processedContent = extractSources(mainContent);
+      mainContent = processedContent.content;
+
+      // Extract source links
+      const sources = processedContent.sources;
       
       const sourceLinksHTML = sources.length > 0 
         ? `
@@ -221,6 +224,7 @@
         </div>
       `;
       
+      // Combine all elements and update the results div
       resultsDiv.innerHTML = `
         <div class="qualification-results">
           ${researchMetaHTML}
@@ -232,6 +236,39 @@
       `;
     }
     
+    // Enable Enter key to trigger research
+    document.getElementById('companyName').addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        qualifyLead();
+      }
+    });
+
+    function showSection(section) {
+      // Remove active class from all items
+      document.querySelectorAll('.sidebar li').forEach(li => {
+        li.classList.remove('active');
+      });
+
+      // Add active class to selected item
+      event.currentTarget.closest('li').classList.add('active');
+
+      // You can add more sophisticated section switching logic here
+      switch(section) {
+        case 'research':
+          // Show research section (current view)
+          break;
+        case 'history':
+          alert('Research History coming soon!');
+          break;
+        case 'saved':
+          alert('Saved Companies coming soon!');
+          break;
+        case 'settings':
+          alert('Settings coming soon!');
+          break;
+      }
+    }
+
     function exportPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
@@ -273,12 +310,6 @@
         alert('Current page URL copied to clipboard!');
       });
     }
-
-    document.getElementById('companyName').addEventListener('keypress', function(event) {
-      if (event.key === 'Enter') {
-        qualifyLead();
-      }
-    });
   </script>
 </body>
 </html>
