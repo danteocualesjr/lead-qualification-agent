@@ -186,3 +186,20 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+// Alternative theme switching approach
+function setTheme(themeName) {
+    // Remove all theme classes
+    document.body.classList.remove('theme-light', 'theme-dark');
+    
+    // Add selected theme class
+    if (themeName === 'system') {
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.body.classList.add(isDark ? 'theme-dark' : 'theme-light');
+    } else {
+        document.body.classList.add(`theme-${themeName}`);
+    }
+    
+    // Save preference
+    localStorage.setItem('theme', themeName);
+}

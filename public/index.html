@@ -6,38 +6,10 @@
   <title>Leadscape AI</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-  <!-- Add this sidebar before your container div -->
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <h2>Leadscape AI</h2>
-      <button id="sidebar-toggle" class="sidebar-toggle">
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
-    <nav class="sidebar-nav">
-      <a href="/" class="nav-item active">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-      </a>
-      <a href="/history.html" class="nav-item">
-        <i class="fas fa-history"></i>
-        <span>History</span>
-      </a>
-      <a href="/saved.html" class="nav-item">
-        <i class="fas fa-bookmark"></i>
-        <span>Saved Research</span>
-      </a>
-      <a href="/settings.html" class="nav-item">
-        <i class="fas fa-cog"></i>
-        <span>Settings</span>
-      </a>
-    </nav>
-  </div>
-
-  <!-- Modify your container div to have the content class -->
-  <div class="container content">
+  <div class="container">
     <main>
       <div class="main-content">
         <h1>Leadscape AI</h1>
@@ -68,32 +40,6 @@
   </div>
 
   <script>
-    // Improved sidebar toggle functionality
-    document.getElementById('sidebar-toggle').addEventListener('click', function() {
-      const sidebar = document.getElementById('sidebar');
-      const content = document.querySelector('.content');
-      
-      // Toggle both classes
-      sidebar.classList.toggle('collapsed');
-      content.classList.toggle('expanded');
-      
-      // Store the state in localStorage (optional, for persistence)
-      const isCollapsed = sidebar.classList.contains('collapsed');
-      localStorage.setItem('sidebarCollapsed', isCollapsed);
-    });
-
-    // Optional: Restore sidebar state on page load
-    window.addEventListener('load', function() {
-      const sidebar = document.getElementById('sidebar');
-      const content = document.querySelector('.content');
-      const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-      
-      if (isCollapsed) {
-        sidebar.classList.add('collapsed');
-        content.classList.add('expanded');
-      }
-    });
-
     async function qualifyLead() {
       const companyName = document.getElementById('companyName').value;
       if (!companyName) return;
@@ -128,25 +74,16 @@
         return;
       }
 
-      // Function to extract and format sources
       function extractSources(content) {
         const sourceRegex = /\[Source:\s*(https?:\/\/[^\]]+)\]/g;
         const sources = [];
-        let matches;
-        
-        while ((matches = sourceRegex.exec(content)) !== null) {
-          try {
-            const url = new URL(matches[1]);
-            sources.push(matches[1]);
-          } catch (error) {
-            console.warn('Invalid URL:', matches[1]);
+        let match;
+        while ((match = sourceRegex.exec(content)) !== null) {
+          if (!sources.includes(match[1])) {
+            sources.push(match[1]);
           }
         }
-
-        // Remove source links from the main content
-        content = content.replace(/\[Source:\s*https?:\/\/[^\]]+\]/g, '');
-
-        return { content, sources };
+        return sources;
       }
       
       let formattedText = data.result;
@@ -178,17 +115,14 @@
       mainContent = mainContent.replace(/•\s([^•\n]+)/g, '<li>$1</li>');
       mainContent = mainContent.replace(/<li>/g, '<ul><li>').replace(/<\/li>\n/g, '</li></ul>');
 
-      // Process the main content to extract sources
-      const processedContent = extractSources(mainContent);
-      mainContent = processedContent.content;
-
-      // Create source links HTML
-      const sourceLinksHTML = processedContent.sources.length > 0 
+      const sources = extractSources(formattedText);
+      
+      const sourceLinksHTML = sources.length > 0 
         ? `
         <div class="sources-section">
           <h3>Sources</h3>
           <ul class="sources-list">
-            ${processedContent.sources.map(source => {
+            ${sources.map(source => {
               try {
                 const hostname = new URL(source).hostname;
                 return `
@@ -207,7 +141,6 @@
         </div>
       ` : '';
       
-      // Add research time and source count display
       const researchMetaHTML = `
         <div class="research-meta">
           <span class="research-time">
@@ -219,16 +152,73 @@
         </div>
       `;
       
+      const exportActionsHTML = `
+        <div class="export-actions">
+          <button onclick="exportPDF()" class="export-btn">
+            <i class="fas fa-file-pdf"></i> Export PDF
+          </button>
+          <button onclick="exportCSV()" class="export-btn">
+            <i class="fas fa-file-csv"></i> Export CSV
+          </button>
+          <button onclick="generateShareableLink()" class="export-btn">
+            <i class="fas fa-link"></i> Get Shareable Link
+          </button>
+        </div>
+      `;
+      
       resultsDiv.innerHTML = `
         <div class="qualification-results">
           ${researchMetaHTML}
           ${formattedReasoning}
           <div class="results-content">${mainContent}</div>
           ${sourceLinksHTML}
+          ${exportActionsHTML}
         </div>
       `;
     }
     
+    function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      const companyName = document.getElementById('companyName').value;
+      doc.setFontSize(18);
+      doc.text(`Research Report: ${companyName}`, 10, 10);
+      
+      const resultContent = document.querySelector('.results-content').innerText;
+      doc.setFontSize(12);
+      doc.text(resultContent, 10, 20);
+      
+      doc.save(`${companyName}_research.pdf`);
+    }
+
+    function exportCSV() {
+      const companyName = document.getElementById('companyName').value;
+      const resultContent = document.querySelector('.results-content').innerText;
+      
+      const csvContent = `Company,Detail\n${companyName},${resultContent.replace(/\n/g, ' ')}`;
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${companyName}_research.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function generateShareableLink() {
+      const currentURL = window.location.href;
+      const companyName = document.getElementById('companyName').value;
+      
+      navigator.clipboard.writeText(currentURL).then(() => {
+        alert('Current page URL copied to clipboard!');
+      });
+    }
+
     document.getElementById('companyName').addEventListener('keypress', function(event) {
       if (event.key === 'Enter') {
         qualifyLead();

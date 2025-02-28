@@ -19,4 +19,4 @@ window.matchMedia('(prefers-color-scheme: dark)')
     });
 
 // Initialize theme on page load
-initializeTheme();
+document.addEventListener('DOMContentLoaded', initializeTheme);
