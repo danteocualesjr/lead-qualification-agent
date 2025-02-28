@@ -35,6 +35,66 @@ body {
   display: flex;
   flex-direction: column;
   padding: 20px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+/* Add styles for collapsed sidebar */
+.sidebar.collapsed {
+  width: 70px;
+  padding: 20px 10px;
+}
+
+.sidebar.collapsed .sidebar-header h2,
+.sidebar.collapsed nav ul li a span,
+.sidebar.collapsed .sidebar-footer p {
+  display: none;
+}
+
+.sidebar.collapsed nav ul li a {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.sidebar.collapsed nav ul li a i {
+  margin: 0;
+}
+
+/* Add toggle button styles */
+.sidebar-toggle {
+  position: absolute;
+  top: 20px;
+  right: -12px;
+  width: 24px;
+  height: 24px;
+  background-color: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: transform 0.3s ease;
+}
+
+.sidebar.collapsed .sidebar-toggle {
+  transform: rotate(180deg);
+}
+
+/* Adjust main content when sidebar is collapsed */
+.main-content-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
+
+.main-content-container.expanded {
+  margin-left: -180px;
 }
 
 .sidebar-header {
@@ -85,15 +145,6 @@ body {
   font-size: 0.8rem;
   padding-top: 20px;
   border-top: 1px solid var(--border-color);
-}
-
-.main-content-container {
-  flex-grow: 1;
-  overflow-y: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
 }
 
 .research-area {

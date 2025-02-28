@@ -10,7 +10,10 @@
 </head>
 <body>
   <div class="app-container">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
+      <button id="sidebar-toggle" class="sidebar-toggle">
+        <i class="fas fa-chevron-left"></i>
+      </button>
       <div class="sidebar-header">
         <h2>Leadscape AI</h2>
       </div>
@@ -18,22 +21,26 @@
         <ul>
           <li class="active">
             <a href="#" onclick="showSection('research')">
-              <i class="fas fa-search"></i> Company Research
+              <i class="fas fa-search"></i>
+              <span>Company Research</span>
             </a>
           </li>
           <li>
             <a href="#" onclick="showSection('history')">
-              <i class="fas fa-history"></i> Research History
+              <i class="fas fa-history"></i>
+              <span>Research History</span>
             </a>
           </li>
           <li>
             <a href="#" onclick="showSection('saved')">
-              <i class="fas fa-bookmark"></i> Saved Companies
+              <i class="fas fa-bookmark"></i>
+              <span>Saved Companies</span>
             </a>
           </li>
           <li>
             <a href="#" onclick="showSection('settings')">
-              <i class="fas fa-cog"></i> Settings
+              <i class="fas fa-cog"></i>
+              <span>Settings</span>
             </a>
           </li>
         </ul>
@@ -43,7 +50,7 @@
       </div>
     </aside>
 
-    <main class="main-content-container">
+    <main class="main-content-container" id="main-content">
       <div class="research-area">
         <h1>Leadscape AI</h1>
         <p class="subtitle">Which company would you like to qualify?</p>
@@ -78,6 +85,25 @@
   </div>
 
   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('main-content');
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      
+      const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+      if (isSidebarCollapsed) {
+        sidebar.classList.add('collapsed');
+        mainContent.classList.add('expanded');
+      }
+      
+      sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+        
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+      });
+    });
+
     function setCompany(companyName) {
       document.getElementById('companyName').value = companyName;
     }
@@ -86,7 +112,6 @@
       const companyName = document.getElementById('companyName').value;
       if (!companyName) return;
       
-      // Show loading state
       document.getElementById('results').innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Researching... This may take a moment.</div>';
       
       try {
@@ -123,7 +148,6 @@
     function displayResults(data) {
       const resultsDiv = document.getElementById('results');
       
-      // Function to extract and format sources
       function extractSources(content) {
         const sourceRegex = /\[Source:\s*(https?:\/\/[^\]]+)\]/g;
         const sources = [];
@@ -133,7 +157,6 @@
           sources.push(matches[1]);
         }
 
-        // Remove source links from the main content
         content = content.replace(/\[Source:\s*https?:\/\/[^\]]+\]/g, '');
 
         return { content, sources };
@@ -141,7 +164,6 @@
       
       let formattedText = data.result;
       
-      // Extract reasoning if present
       const reasoningMatch = formattedText.match(/^(Okay,.*?)\n\n/s);
       let reasoning = '';
       let mainContent = formattedText;
@@ -151,7 +173,6 @@
         mainContent = formattedText.replace(reasoning + '\n\n', '');
       }
       
-      // Format reasoning section
       let formattedReasoning = reasoning 
         ? `<div class="chain-of-thought">
              <i class="fas fa-brain"></i> 
@@ -160,7 +181,6 @@
            </div>`
         : '';
       
-      // Format main content
       mainContent = mainContent.replace(/\[\d+\]/g, '');
       mainContent = mainContent.replace(/(\d+\.\s*[^:]+:)/g, '<h3>$1</h3>');
       
@@ -171,11 +191,9 @@
       mainContent = mainContent.replace(/•\s([^•\n]+)/g, '<li>$1</li>');
       mainContent = mainContent.replace(/<li>/g, '<ul><li>').replace(/<\/li>\n/g, '</li></ul>');
 
-      // Process content and extract sources
       const processedContent = extractSources(mainContent);
       mainContent = processedContent.content;
 
-      // Create source links section
       const sourceLinksHTML = processedContent.sources.length > 0 
         ? `
         <div class="sources-section">
@@ -192,7 +210,6 @@
         </div>
       ` : '';
       
-      // Add research time and source count display
       const researchMetaHTML = `
         <div class="research-meta">
           <span class="research-time">
@@ -204,7 +221,6 @@
         </div>
       `;
       
-      // Combine all sections
       resultsDiv.innerHTML = `
         <div class="qualification-results">
           ${researchMetaHTML}
@@ -215,7 +231,6 @@
       `;
     }
     
-    // Enable Enter key to trigger research
     document.getElementById('companyName').addEventListener('keypress', function(event) {
       if (event.key === 'Enter') {
         qualifyLead();
