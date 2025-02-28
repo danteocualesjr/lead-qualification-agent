@@ -82,7 +82,145 @@
       document.getElementById('companyName').value = companyName;
     }
 
-    // Rest of the previous script remains the same...
+    async function qualifyLead() {
+      const companyName = document.getElementById('companyName').value;
+      if (!companyName) return;
+      
+      // Show loading state
+      document.getElementById('results').innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Researching... This may take a moment.</div>';
+      
+      try {
+        const response = await fetch('/qualify-lead', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ companyName })
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) {
+          document.getElementById('results').innerHTML = `
+            <div class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              <p>${data.error}</p>
+              ${data.details ? `<p class="error-details">${data.details}</p>` : ''}
+            </div>`;
+          return;
+        }
+        
+        displayResults(data);
+      } catch (error) {
+        document.getElementById('results').innerHTML = `
+          <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Error: ${error.message}</p>
+          </div>`;
+      }
+    }
+
+    function displayResults(data) {
+      const resultsDiv = document.getElementById('results');
+      
+      // Function to extract and format sources
+      function extractSources(content) {
+        const sourceRegex = /\[Source:\s*(https?:\/\/[^\]]+)\]/g;
+        const sources = [];
+        let matches;
+        
+        while ((matches = sourceRegex.exec(content)) !== null) {
+          sources.push(matches[1]);
+        }
+
+        // Remove source links from the main content
+        content = content.replace(/\[Source:\s*https?:\/\/[^\]]+\]/g, '');
+
+        return { content, sources };
+      }
+      
+      let formattedText = data.result;
+      
+      // Extract reasoning if present
+      const reasoningMatch = formattedText.match(/^(Okay,.*?)\n\n/s);
+      let reasoning = '';
+      let mainContent = formattedText;
+      
+      if (reasoningMatch) {
+        reasoning = reasoningMatch[1];
+        mainContent = formattedText.replace(reasoning + '\n\n', '');
+      }
+      
+      // Format reasoning section
+      let formattedReasoning = reasoning 
+        ? `<div class="chain-of-thought">
+             <i class="fas fa-brain"></i> 
+             <span class="reasoning-label">Investigative Thought Process</span>
+             <p class="reasoning-text">${reasoning.replace(/\n/g, '<br>')}</p>
+           </div>`
+        : '';
+      
+      // Format main content
+      mainContent = mainContent.replace(/\[\d+\]/g, '');
+      mainContent = mainContent.replace(/(\d+\.\s*[^:]+:)/g, '<h3>$1</h3>');
+      
+      mainContent = mainContent.split('\n\n')
+        .map(para => `<p>${para.trim()}</p>`)
+        .join('');
+      
+      mainContent = mainContent.replace(/•\s([^•\n]+)/g, '<li>$1</li>');
+      mainContent = mainContent.replace(/<li>/g, '<ul><li>').replace(/<\/li>\n/g, '</li></ul>');
+
+      // Process content and extract sources
+      const processedContent = extractSources(mainContent);
+      mainContent = processedContent.content;
+
+      // Create source links section
+      const sourceLinksHTML = processedContent.sources.length > 0 
+        ? `
+        <div class="sources-section">
+          <h3>Sources</h3>
+          <ul class="sources-list">
+            ${processedContent.sources.map(source => `
+              <li>
+                <a href="${source}" target="_blank" rel="noopener noreferrer">
+                  <i class="fas fa-external-link-alt"></i> ${new URL(source).hostname}
+                </a>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      ` : '';
+      
+      // Add research time and source count display
+      const researchMetaHTML = `
+        <div class="research-meta">
+          <span class="research-time">
+            <i class="fas fa-clock"></i> Research Time: ${data.researchTime.minutes} min ${data.researchTime.seconds} sec
+          </span>
+          <span class="source-count">
+            <i class="fas fa-book-open"></i> Sources: ${data.sourceCount}
+          </span>
+        </div>
+      `;
+      
+      // Combine all sections
+      resultsDiv.innerHTML = `
+        <div class="qualification-results">
+          ${researchMetaHTML}
+          ${formattedReasoning}
+          <div class="results-content">${mainContent}</div>
+          ${sourceLinksHTML}
+        </div>
+      `;
+    }
+    
+    // Enable Enter key to trigger research
+    document.getElementById('companyName').addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        qualifyLead();
+      }
+    });
   </script>
 </body>
 </html>
