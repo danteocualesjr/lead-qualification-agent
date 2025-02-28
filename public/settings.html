@@ -4,116 +4,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - Leadscape AI</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
-        <button id="sidebar-toggle" class="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="sidebar-content">
-            <h2>Leadscape AI</h2>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <button id="sidebar-toggle" class="sidebar-toggle">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="sidebar-header">
+                <h2>Leadscape AI</h2>
+            </div>
             <nav>
-                <a href="/" class="nav-item">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="/history.html" class="nav-item">
-                    <i class="fas fa-history"></i>
-                    <span>History</span>
-                </a>
-                <a href="/saved.html" class="nav-item">
-                    <i class="fas fa-bookmark"></i>
-                    <span>Saved Research</span>
-                </a>
-                <a href="/settings.html" class="nav-item active">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
+                <ul>
+                    <li>
+                        <a href="/">
+                            <i class="fas fa-search"></i>
+                            <span>Company Research</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/history.html">
+                            <i class="fas fa-history"></i>
+                            <span>Research History</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/saved.html">
+                            <i class="fas fa-bookmark"></i>
+                            <span>Saved Companies</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="/settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
             </nav>
-        </div>
-    </div>
-
-    <div class="container content">
-        <main>
-            <h1>Settings</h1>
-            
-            <div class="settings-section">
-                <h2><i class="fas fa-key"></i> API Configuration</h2>
-                <div class="setting-item">
-                    <label for="api-key">Perplexity API Key</label>
-                    <div class="api-key-input">
-                        <input type="password" id="api-key" value="••••••••••••••••">
-                        <button class="action-btn" onclick="toggleApiKey()">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="action-btn" onclick="updateApiKey()">
-                            <i class="fas fa-save"></i> Save
-                        </button>
-                    </div>
-                </div>
+            <div class="sidebar-footer">
+                <p>Powered by Perplexity</p>
             </div>
+        </aside>
 
-            <div class="settings-section">
-                <h2><i class="fas fa-paint-brush"></i> Appearance</h2>
-                <div class="setting-item">
-                    <label>Theme</label>
-                    <div class="theme-options">
-                        <button class="theme-btn active" data-theme="light">
-                            <i class="fas fa-sun"></i> Light
-                        </button>
-                        <button class="theme-btn" data-theme="dark">
-                            <i class="fas fa-moon"></i> Dark
-                        </button>
-                        <button class="theme-btn" data-theme="system">
-                            <i class="fas fa-laptop"></i> System
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h2><i class="fas fa-history"></i> History Settings</h2>
-                <div class="setting-item">
-                    <label class="switch-label">
-                        <span>Save Research History</span>
-                        <div class="switch">
-                            <input type="checkbox" id="save-history" checked>
-                            <span class="slider"></span>
+        <main class="main-content-container" id="main-content">
+            <div class="research-area">
+                <h1>Settings</h1>
+                
+                <div class="settings-section">
+                    <h2><i class="fas fa-key"></i> API Configuration</h2>
+                    <div class="setting-item">
+                        <label for="api-key">Perplexity API Key</label>
+                        <div class="api-key-input">
+                            <input type="password" id="api-key" value="••••••••••••••••">
+                            <button class="action-btn" onclick="toggleApiKey()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn" onclick="updateApiKey()">
+                                <i class="fas fa-save"></i> Save
+                            </button>
                         </div>
-                    </label>
+                    </div>
                 </div>
-                <div class="setting-item">
-                    <button class="action-btn danger" onclick="clearHistory()">
-                        <i class="fas fa-trash"></i> Clear All History
-                    </button>
-                </div>
-            </div>
 
-            <div class="settings-section">
-                <h2><i class="fas fa-file-export"></i> Data Export</h2>
-                <div class="setting-item">
-                    <button class="action-btn" onclick="exportData('history')">
-                        <i class="fas fa-download"></i> Export History
-                    </button>
-                    <button class="action-btn" onclick="exportData('saved')">
-                        <i class="fas fa-download"></i> Export Saved Research
-                    </button>
+                <div class="settings-section">
+                    <h2><i class="fas fa-paint-brush"></i> Appearance</h2>
+                    <div class="setting-item">
+                        <label>Theme</label>
+                        <div class="theme-options">
+                            <button class="theme-btn active" data-theme="light">
+                                <i class="fas fa-sun"></i> Light
+                            </button>
+                            <button class="theme-btn" data-theme="dark">
+                                <i class="fas fa-moon"></i> Dark
+                            </button>
+                            <button class="theme-btn" data-theme="system">
+                                <i class="fas fa-laptop"></i> System
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h2><i class="fas fa-history"></i> History Settings</h2>
+                    <div class="setting-item">
+                        <label class="switch-label">
+                            <span>Save Research History</span>
+                            <div class="switch">
+                                <input type="checkbox" id="save-history" checked>
+                                <span class="slider"></span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <button class="action-btn danger" onclick="clearHistory()">
+                            <i class="fas fa-trash"></i> Clear All History
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h2><i class="fas fa-file-export"></i> Data Export</h2>
+                    <div class="setting-item">
+                        <button class="action-btn" onclick="exportData('history')">
+                            <i class="fas fa-download"></i> Export History
+                        </button>
+                        <button class="action-btn" onclick="exportData('saved')">
+                            <i class="fas fa-download"></i> Export Saved Research
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        // Sidebar toggle functionality
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const sidebar = document.getElementById('sidebar');
-        const content = document.querySelector('.content');
-
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            content.classList.toggle('expanded');
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            
+            // Load saved sidebar state
+            const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isSidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+            }
+            
+            // Toggle sidebar
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+            });
         });
 
         // API Key toggle
@@ -124,74 +149,6 @@
             } else {
                 apiKeyInput.type = 'password';
             }
-        }
-
-        // Theme management
-        const themeButtons = document.querySelectorAll('.theme-btn');
-        
-        // Function to set theme
-        function setTheme(theme) {
-            if (theme === 'system') {
-                // Check system preference
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'light');
-                }
-            } else {
-                document.documentElement.setAttribute('data-theme', theme);
-            }
-            
-            // Save theme preference
-            localStorage.setItem('theme', theme);
-            
-            // Update active button
-            themeButtons.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.theme === theme);
-            });
-        }
-
-        // Add click handlers to theme buttons
-        themeButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                setTheme(btn.dataset.theme);
-            });
-        });
-
-        // Listen for system theme changes
-        window.matchMedia('(prefers-color-scheme: dark)')
-            .addEventListener('change', e => {
-                if (localStorage.getItem('theme') === 'system') {
-                    setTheme('system');
-                }
-            });
-
-        // Initialize theme
-        function initializeTheme() {
-            const theme = localStorage.getItem('theme') || 'system';
-            if (theme === 'system') {
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                }
-            } else {
-                document.documentElement.setAttribute('data-theme', theme);
-            }
-        }
-
-        // Call on page load
-        initializeTheme();
-
-        // Clear history confirmation
-        function clearHistory() {
-            if (confirm('Are you sure you want to clear all research history? This cannot be undone.')) {
-                // Implement clear history logic here
-            }
-        }
-
-        // Export data
-        function exportData(type) {
-            // Implement export logic here
-            console.log(`Exporting ${type} data...`);
         }
 
         // Save API key
@@ -212,6 +169,19 @@
                 console.error('Error updating API key:', error);
                 alert('Failed to update API key');
             }
+        }
+
+        // Clear history confirmation
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all research history? This cannot be undone.')) {
+                // Implement clear history logic here
+            }
+        }
+
+        // Export data
+        function exportData(type) {
+            // Implement export logic here
+            console.log(`Exporting ${type} data...`);
         }
     </script>
 </body>
