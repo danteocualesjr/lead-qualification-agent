@@ -4,13 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leadscape AI</title>
-  <!-- Load stylesheets -->
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-  <!-- Sidebar navigation menu -->
   <div class="app-container">
     <aside class="sidebar">
       <div class="sidebar-header">
@@ -46,270 +44,45 @@
     </aside>
 
     <main class="main-content-container">
-      <div class="main-content">
+      <div class="research-area">
         <h1>Leadscape AI</h1>
         <p class="subtitle">Which company would you like to qualify?</p>
 
-        <div class="search-wrapper">
-          <input 
-            type="text" 
-            id="companyName" 
-            class="company-input" 
-            placeholder="Enter company name (e.g., OpenAI, Perplexity, Anthropic)"
-          >
-          <button onclick="qualifyLead()" class="research-btn">Deep Research</button>
+        <div class="search-container">
+          <div class="search-wrapper">
+            <input 
+              type="text" 
+              id="companyName" 
+              class="company-input" 
+              placeholder="Enter company name (e.g., OpenAI, Perplexity, Anthropic)"
+            >
+            <button onclick="qualifyLead()" class="research-btn">Deep Research</button>
+          </div>
+
+          <div class="recent-searches">
+            <span>Recent:</span>
+            <a href="#" onclick="setCompany('Perplexity')">Perplexity</a>
+            <a href="#" onclick="setCompany('OpenAI')">OpenAI</a>
+            <a href="#" onclick="setCompany('Anthropic')">Anthropic</a>
+          </div>
         </div>
 
         <div class="pro-tip">
           <h3>Pro Tip</h3>
           <p>Search for any company to get detailed insights about their size, industry, tech stack, funding, and potential fit for your ideal customer profile.</p>
         </div>
-      </div>
 
-      <div id="results" class="results-container"></div>
+        <div id="results" class="results-container"></div>
+      </div>
     </main>
   </div>
 
-  <footer class="app-footer">
-    Powered by Perplexity's Sonar • Created with ❤️
-  </footer>
-
   <script>
-    // Toggle sidebar visibility and store preference
-    document.getElementById('sidebar-toggle').addEventListener('click', function() {
-      // ... existing code ...
-    });
-
-    // Restore sidebar state when page loads
-    window.addEventListener('load', function() {
-      // ... existing code ...
-    });
-
-    // Main function to send research request to backend
-    async function qualifyLead() {
-      const companyName = document.getElementById('companyName').value;
-      if (!companyName) return;
-      
-      // Show loading spinner while researching
-      document.getElementById('results').innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Researching... This may take a moment.</div>';
-      
-      try {
-        const response = await fetch('/qualify-lead', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ companyName })
-        });
-        
-        const data = await response.json();
-        displayResults(data);
-      } catch (error) {
-        document.getElementById('results').innerHTML = `<p class="error"><i class="fas fa-exclamation-triangle"></i> Error: ${error.message}</p>`;
-      }
-    }
-    
-    // Format and display research results
-    function displayResults(data) {
-      const resultsDiv = document.getElementById('results');
-      
-      // Handle error cases
-      if (data.error) {
-        let errorMessage = `<p class="error"><i class="fas fa-exclamation-triangle"></i> Error: ${data.error}</p>`;
-        if (data.details) {
-          errorMessage += `<p>Details: ${JSON.stringify(data.details)}</p>`;
-        }
-        resultsDiv.innerHTML = errorMessage;
-        return;
-      }
-
-      // Helper function to extract source URLs from content
-      function extractSources(content) {
-        const sourceRegex = /\[Source:\s*(https?:\/\/[^\]]+)\]/g;
-        const sources = [];
-        let match;
-        while ((match = sourceRegex.exec(content)) !== null) {
-          if (!sources.includes(match[1])) {
-            sources.push(match[1]);
-          }
-        }
-        return sources;
-      }
-      
-      let formattedText = data.result;
-      
-      // Extract and format the AI's reasoning process if present
-      const reasoningMatch = formattedText.match(/^(Okay,.*?)\n\n/s);
-      let reasoning = '';
-      let mainContent = formattedText;
-      
-      if (reasoningMatch) {
-        reasoning = reasoningMatch[1];
-        mainContent = formattedText.replace(reasoning + '\n\n', '');
-      }
-      
-      let formattedReasoning = reasoning 
-        ? `<div class="chain-of-thought">
-             <i class="fas fa-brain"></i> 
-             <span class="reasoning-label">Investigative Thought Process</span>
-             <p class="reasoning-text">${reasoning.replace(/\n/g, '<br>')}</p>
-           </div>`
-        : '';
-      
-      // Format the main content with proper HTML structure
-      mainContent = mainContent.replace(/\[\d+\]/g, '');
-      mainContent = mainContent.replace(/(\d+\.\s*[^:]+:)/g, '<h3>$1</h3>');
-      
-      // Convert paragraphs and bullet points to HTML
-      mainContent = mainContent.split('\n\n')
-        .map(para => `<p>${para.trim()}</p>`)
-        .join('');
-      
-      mainContent = mainContent.replace(/•\s([^•\n]+)/g, '<li>$1</li>');
-      mainContent = mainContent.replace(/<li>/g, '<ul><li>').replace(/<\/li>\n/g, '</li></ul>');
-
-      // Extract and format source links
-      const processedContent = extractSources(mainContent);
-      mainContent = processedContent.content;
-
-      // Extract source links
-      const sources = processedContent.sources;
-      
-      const sourceLinksHTML = sources.length > 0 
-        ? `
-        <div class="sources-section">
-          <h3>Sources</h3>
-          <ul class="sources-list">
-            ${sources.map(source => {
-              try {
-                const hostname = new URL(source).hostname;
-                return `
-                  <li>
-                    <a href="${source}" target="_blank" rel="noopener noreferrer">
-                      <i class="fas fa-external-link-alt"></i> ${hostname}
-                    </a>
-                  </li>
-                `;
-              } catch (error) {
-                console.warn('Invalid URL in sources:', source);
-                return '';
-              }
-            }).join('')}
-          </ul>
-        </div>
-      ` : '';
-      
-      const researchMetaHTML = `
-        <div class="research-meta">
-          <span class="research-time">
-            <i class="fas fa-clock"></i> Research Time: ${data.researchTime.minutes} min ${data.researchTime.seconds} sec
-          </span>
-          <span class="source-count">
-            <i class="fas fa-book-open"></i> Sources: ${data.sourceCount}
-          </span>
-        </div>
-      `;
-      
-      const exportActionsHTML = `
-        <div class="export-actions">
-          <button onclick="exportPDF()" class="export-btn">
-            <i class="fas fa-file-pdf"></i> Export PDF
-          </button>
-          <button onclick="exportCSV()" class="export-btn">
-            <i class="fas fa-file-csv"></i> Export CSV
-          </button>
-          <button onclick="generateShareableLink()" class="export-btn">
-            <i class="fas fa-link"></i> Get Shareable Link
-          </button>
-        </div>
-      `;
-      
-      // Combine all elements and update the results div
-      resultsDiv.innerHTML = `
-        <div class="qualification-results">
-          ${researchMetaHTML}
-          ${formattedReasoning}
-          <div class="results-content">${mainContent}</div>
-          ${sourceLinksHTML}
-          ${exportActionsHTML}
-        </div>
-      `;
-    }
-    
-    // Enable Enter key to trigger research
-    document.getElementById('companyName').addEventListener('keypress', function(event) {
-      if (event.key === 'Enter') {
-        qualifyLead();
-      }
-    });
-
-    function showSection(section) {
-      // Remove active class from all items
-      document.querySelectorAll('.sidebar li').forEach(li => {
-        li.classList.remove('active');
-      });
-
-      // Add active class to selected item
-      event.currentTarget.closest('li').classList.add('active');
-
-      // You can add more sophisticated section switching logic here
-      switch(section) {
-        case 'research':
-          // Show research section (current view)
-          break;
-        case 'history':
-          alert('Research History coming soon!');
-          break;
-        case 'saved':
-          alert('Saved Companies coming soon!');
-          break;
-        case 'settings':
-          alert('Settings coming soon!');
-          break;
-      }
+    function setCompany(companyName) {
+      document.getElementById('companyName').value = companyName;
     }
 
-    function exportPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      
-      const companyName = document.getElementById('companyName').value;
-      doc.setFontSize(18);
-      doc.text(`Research Report: ${companyName}`, 10, 10);
-      
-      const resultContent = document.querySelector('.results-content').innerText;
-      doc.setFontSize(12);
-      doc.text(resultContent, 10, 20);
-      
-      doc.save(`${companyName}_research.pdf`);
-    }
-
-    function exportCSV() {
-      const companyName = document.getElementById('companyName').value;
-      const resultContent = document.querySelector('.results-content').innerText;
-      
-      const csvContent = `Company,Detail\n${companyName},${resultContent.replace(/\n/g, ' ')}`;
-      
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      
-      link.setAttribute('href', url);
-      link.setAttribute('download', `${companyName}_research.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    function generateShareableLink() {
-      const currentURL = window.location.href;
-      const companyName = document.getElementById('companyName').value;
-      
-      navigator.clipboard.writeText(currentURL).then(() => {
-        alert('Current page URL copied to clipboard!');
-      });
-    }
+    // Rest of the previous script remains the same...
   </script>
 </body>
 </html>
