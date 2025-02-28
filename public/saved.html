@@ -4,69 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saved Research - Leadscape AI</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
-        <button id="sidebar-toggle" class="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="sidebar-content">
-            <h2>Leadscape AI</h2>
-            <nav>
-                <a href="/" class="nav-item">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="/history.html" class="nav-item">
-                    <i class="fas fa-history"></i>
-                    <span>History</span>
-                </a>
-                <a href="/saved.html" class="nav-item active">
-                    <i class="fas fa-bookmark"></i>
-                    <span>Saved Research</span>
-                </a>
-                <a href="/settings.html" class="nav-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </nav>
-        </div>
-    </div>
-
-    <div class="container content">
-        <main>
-            <div class="saved-header">
-                <h1>Saved Research</h1>
-                <div class="saved-controls">
-                    <select id="sort-by" class="sort-select">
-                        <option value="date-new">Newest First</option>
-                        <option value="date-old">Oldest First</option>
-                        <option value="name-asc">Company Name A-Z</option>
-                        <option value="name-desc">Company Name Z-A</option>
-                    </select>
-                    <button id="create-folder" class="action-btn">
-                        <i class="fas fa-folder-plus"></i> New Folder
-                    </button>
-                </div>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <button id="sidebar-toggle" class="sidebar-toggle">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="sidebar-header">
+                <h2>Leadscape AI</h2>
             </div>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="/">
+                            <i class="fas fa-search"></i>
+                            <span>Company Research</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/history.html">
+                            <i class="fas fa-history"></i>
+                            <span>Research History</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="/saved.html">
+                            <i class="fas fa-bookmark"></i>
+                            <span>Saved Companies</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Powered by Perplexity</p>
+            </div>
+        </aside>
 
-            <div id="saved-list" class="saved-list">
-                <!-- Saved items will be populated here -->
+        <main class="main-content-container" id="main-content">
+            <div class="research-area">
+                <div class="saved-header">
+                    <h1>Saved Research</h1>
+                    <div class="saved-controls">
+                        <select id="sort-by" class="sort-select">
+                            <option value="date-new">Newest First</option>
+                            <option value="date-old">Oldest First</option>
+                            <option value="name-asc">Company Name A-Z</option>
+                            <option value="name-desc">Company Name Z-A</option>
+                        </select>
+                        <button id="create-folder" class="action-btn">
+                            <i class="fas fa-folder-plus"></i> New Folder
+                        </button>
+                    </div>
+                </div>
+
+                <div id="saved-list" class="saved-list">
+                    <!-- Saved items will be populated here -->
+                </div>
             </div>
         </main>
     </div>
 
     <script>
-        // Sidebar toggle functionality
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const sidebar = document.getElementById('sidebar');
-        const content = document.querySelector('.content');
-
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            content.classList.toggle('expanded');
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            
+            // Load saved sidebar state
+            const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isSidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+            }
+            
+            // Toggle sidebar
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+            });
         });
 
         // Load and display saved research
@@ -77,17 +102,23 @@
                 displaySavedResearch(saved);
             } catch (error) {
                 console.error('Error loading saved research:', error);
+                document.getElementById('saved-list').innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Error loading saved research: ${error.message}</p>
+                    </div>`;
             }
         }
 
         function displaySavedResearch(saved) {
             const savedList = document.getElementById('saved-list');
-            if (saved.length === 0) {
+            if (!saved || saved.length === 0) {
                 savedList.innerHTML = `
                     <div class="empty-state">
-                        <i class="fas fa-bookmark fa-2x"></i>
+                        <i class="fas fa-bookmark fa-3x"></i>
                         <p>No saved research yet</p>
-                        <p class="empty-state-subtitle">Research companies and bookmark them to save for later</p>
+                        <p class="empty-state-subtitle">Save your research to access it later</p>
+                        <a href="/" class="action-btn">Start Researching</a>
                     </div>`;
                 return;
             }
