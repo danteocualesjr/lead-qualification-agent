@@ -19,6 +19,7 @@ app.get('/', (req, res) => {
 
 // API route to query Perplexity Sonar
 app.post('/qualify-lead', async (req, res) => {
+  // Track research duration
   const startTime = Date.now();
   
   try {
@@ -28,7 +29,7 @@ app.post('/qualify-lead', async (req, res) => {
       return res.status(400).json({ error: 'Company name is required' });
     }
     
-    // More detailed prompt with clear instructions
+    // Define the research prompt with specific sections we want info about
     const promptText = `Provide a comprehensive yet concise research summary for ${companyName}. 
     Strictly limit your response to:
     • Company Overview
@@ -40,7 +41,7 @@ app.post('/qualify-lead', async (req, res) => {
     
     Use clear, bullet-point format. Maximum 300 words.`;
     
-    // Call Perplexity API with extended timeout
+    // Make API call to Perplexity with a 5-minute timeout
     const response = await axios.post('https://api.perplexity.ai/chat/completions', {
       model: "sonar-deep-research",
       messages: [
@@ -58,7 +59,7 @@ app.post('/qualify-lead', async (req, res) => {
         'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
         'Content-Type': 'application/json'
       },
-      timeout: 300000 // Extended to 5 minutes (300 seconds)
+      timeout: 300000 // 5 minutes in milliseconds
     });
     
     // Calculate research time
@@ -70,7 +71,7 @@ app.post('/qualify-lead', async (req, res) => {
     // Extract the assistant's message
     const result = response.data.choices[0].message.content;
     
-    // Extract sources
+    // Extract and deduplicate source URLs from the research results
     const sourceRegex = /\[Source:\s*(https?:\/\/[^\]]+)\]/g;
     const sources = [];
     let match;
@@ -81,7 +82,7 @@ app.post('/qualify-lead', async (req, res) => {
     }
     const sourceCount = sources.length || 1;
     
-    // Ensure we're returning valid JSON
+    // Return research results with metadata
     res.json({ 
       result, 
       researchTime: { minutes, seconds },
@@ -90,6 +91,7 @@ app.post('/qualify-lead', async (req, res) => {
   } catch (error) {
     console.error('Research error:', error);
     
+    // Handle different types of errors with appropriate status codes
     if (error.code === 'ECONNABORTED') {
       res.status(504).json({ 
         error: 'Research timed out',
