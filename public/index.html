@@ -9,8 +9,41 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <main>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Leadscape AI</h2>
+      </div>
+      <nav>
+        <ul>
+          <li class="active">
+            <a href="#" onclick="showSection('research')">
+              <i class="fas fa-search"></i> Company Research
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showSection('history')">
+              <i class="fas fa-history"></i> Research History
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showSection('saved')">
+              <i class="fas fa-bookmark"></i> Saved Companies
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showSection('settings')">
+              <i class="fas fa-cog"></i> Settings
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer">
+        <p>Powered by Perplexity</p>
+      </div>
+    </aside>
+
+    <main class="main-content-container">
       <div class="main-content">
         <h1>Leadscape AI</h1>
         <p class="subtitle">Which company would you like to qualify?</p>
@@ -33,13 +66,35 @@
 
       <div id="results" class="results-container"></div>
     </main>
-
-    <footer class="app-footer">
-      Powered by Perplexity's Sonar • Created with ❤️
-    </footer>
   </div>
 
   <script>
+    function showSection(section) {
+      // Remove active class from all items
+      document.querySelectorAll('.sidebar li').forEach(li => {
+        li.classList.remove('active');
+      });
+
+      // Add active class to selected item
+      event.currentTarget.closest('li').classList.add('active');
+
+      // You can add more sophisticated section switching logic here
+      switch(section) {
+        case 'research':
+          // Show research section (current view)
+          break;
+        case 'history':
+          alert('Research History coming soon!');
+          break;
+        case 'saved':
+          alert('Saved Companies coming soon!');
+          break;
+        case 'settings':
+          alert('Settings coming soon!');
+          break;
+      }
+    }
+
     async function qualifyLead() {
       const companyName = document.getElementById('companyName').value;
       if (!companyName) return;
