@@ -20,25 +20,25 @@
       <nav>
         <ul>
           <li class="active">
-            <a href="#" onclick="showSection('research')">
+            <a href="/">
               <i class="fas fa-search"></i>
               <span>Company Research</span>
             </a>
           </li>
           <li>
-            <a href="#" onclick="showSection('history')">
+            <a href="/history.html">
               <i class="fas fa-history"></i>
               <span>Research History</span>
             </a>
           </li>
           <li>
-            <a href="#" onclick="showSection('saved')">
+            <a href="/saved.html">
               <i class="fas fa-bookmark"></i>
               <span>Saved Companies</span>
             </a>
           </li>
           <li>
-            <a href="#" onclick="showSection('settings')">
+            <a href="/settings.html">
               <i class="fas fa-cog"></i>
               <span>Settings</span>
             </a>
@@ -101,6 +101,21 @@
         mainContent.classList.toggle('expanded');
         
         localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+      });
+
+      const currentPath = window.location.pathname;
+      const navItems = document.querySelectorAll('.sidebar nav ul li');
+      
+      navItems.forEach(item => {
+        const link = item.querySelector('a');
+        const linkPath = link.getAttribute('href');
+        
+        if (currentPath === linkPath || 
+            (currentPath === '/' && linkPath === '/') || 
+            (currentPath.includes(linkPath) && linkPath !== '/')) {
+          navItems.forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+        }
       });
     });
 
