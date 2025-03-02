@@ -13,20 +13,31 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve HTML pages
-app.get('/', (req, res) => {
+app.get(['/', '/index', '/index.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/history', (req, res) => {
+app.get(['/history', '/history.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'history.html'));
 });
 
-app.get('/saved', (req, res) => {
+app.get(['/saved', '/saved.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'saved.html'));
 });
 
-app.get('/settings', (req, res) => {
+app.get(['/settings', '/settings.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'settings.html'));
+});
+
+// API endpoints
+app.get('/api/history', (req, res) => {
+  // Placeholder for history API
+  res.json([]);
+});
+
+app.get('/api/saved', (req, res) => {
+  // Placeholder for saved research API
+  res.json([]);
 });
 
 // API route to query Perplexity Sonar

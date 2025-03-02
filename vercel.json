@@ -12,24 +12,24 @@
   ],
   "routes": [
     {
-      "src": "/history.html",
-      "dest": "/public/history.html"
-    },
-    {
-      "src": "/saved.html",
-      "dest": "/public/saved.html"
-    },
-    {
-      "src": "/settings.html",
-      "dest": "/public/settings.html"
-    },
-    {
       "src": "/style.css",
       "dest": "/public/style.css"
     },
     {
       "src": "/js/(.*)",
       "dest": "/public/js/$1"
+    },
+    {
+      "src": "/history",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/saved",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/settings",
+      "dest": "/app.js"
     },
     {
       "src": "/(.*)",
