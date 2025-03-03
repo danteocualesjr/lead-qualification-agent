@@ -1,14 +1,14 @@
-/* Modern CSS with updated color scheme and design */
+/* Modern CSS with original orange color scheme */
 :root {
-  --primary: #4F46E5;
-  --primary-light: #6366F1;
-  --primary-dark: #4338CA;
-  --background: #F9FAFB;
+  --primary: #FF6B3D;
+  --primary-light: #FF8661;
+  --primary-dark: #E85D2F;
+  --background: #F6F6F6;
   --surface: #FFFFFF;
-  --text-primary: #111827;
-  --text-secondary: #4B5563;
-  --text-tertiary: #6B7280;
-  --border: #E5E7EB;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #888888;
+  --border: #E0E0E0;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -174,7 +174,7 @@ body {
 .company-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 107, 61, 0.1);
 }
 
 .research-btn {
@@ -215,12 +215,12 @@ body {
   text-decoration: none;
   padding: 4px 12px;
   border-radius: 20px;
-  background-color: rgba(79, 70, 229, 0.1);
+  background-color: rgba(255, 107, 61, 0.1);
   transition: all 0.2s ease;
 }
 
 .recent-searches a:hover {
-  background-color: rgba(79, 70, 229, 0.2);
+  background-color: rgba(255, 107, 61, 0.2);
 }
 
 /* Pro Tip Card */
