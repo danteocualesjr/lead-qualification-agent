@@ -53,6 +53,7 @@ app.post('/qualify-lead', async (req, res) => {
     }
     
     // Define the research prompt with specific sections we want info about
+    
     const promptText = `Provide a comprehensive yet concise research summary for ${companyName}. 
     Strictly limit your response to:
     • Company Overview
