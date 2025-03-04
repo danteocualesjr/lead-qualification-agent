@@ -53,7 +53,7 @@ app.post('/qualify-lead', async (req, res) => {
     }
     
     // Define the research prompt with specific sections we want info about
-    
+
     const promptText = `Provide a comprehensive yet concise research summary for ${companyName}. 
     Strictly limit your response to:
     • Company Overview
@@ -66,6 +66,7 @@ app.post('/qualify-lead', async (req, res) => {
     Use clear, bullet-point format. Maximum 300 words.`;
     
     // Make API call to Perplexity with a 5-minute timeout
+    
     const response = await axios.post('https://api.perplexity.ai/chat/completions', {
       model: "sonar-deep-research",
       messages: [
