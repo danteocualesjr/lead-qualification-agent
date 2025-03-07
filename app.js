@@ -34,8 +34,9 @@ app.get(['/settings', '/settings.html'], (req, res) => {
 // API endpoints
 
 app.get('/api/history', (req, res) => {
-  
+
   // Placeholder for history API
+  
   res.json([]);
 });
 
