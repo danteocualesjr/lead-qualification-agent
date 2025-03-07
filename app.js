@@ -36,11 +36,12 @@ app.get(['/settings', '/settings.html'], (req, res) => {
 app.get('/api/history', (req, res) => {
 
   // Placeholder for history API
-  
+
   res.json([]);
 });
 
 app.get('/api/saved', (req, res) => {
+  
   // Placeholder for saved research API
   res.json([]);
 });
