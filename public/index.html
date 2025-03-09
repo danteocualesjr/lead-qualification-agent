@@ -239,13 +239,167 @@
       resultsDiv.innerHTML = `
         <div class="qualification-results">
           ${researchMetaHTML}
+          <div class="results-actions">
+            <button onclick="exportToPDF()" class="action-btn">
+              <i class="fas fa-file-pdf"></i> Export PDF
+            </button>
+            <button onclick="shareResearch()" class="action-btn">
+              <i class="fas fa-share-alt"></i> Share
+            </button>
+            <button onclick="saveToBookmarks()" class="action-btn">
+              <i class="fas fa-bookmark"></i> Save
+            </button>
+          </div>
           ${formattedReasoning}
           <div class="results-content">${mainContent}</div>
           ${sourceLinksHTML}
         </div>
       `;
+
+      // Store the current research result for export/sharing
+      window.currentResearch = {
+        companyName: document.getElementById('companyName').value,
+        result: data.result,
+        timestamp: new Date().toISOString(),
+        meta: {
+          researchTime: data.researchTime,
+          sourceCount: data.sourceCount
+        }
+      };
     }
-    
+
+    // Export to PDF functionality
+    async function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Add header
+      doc.setFontSize(20);
+      doc.setTextColor(255, 107, 61); // Orange header
+      doc.text("Leadscape AI - Company Research", 20, 20);
+      
+      // Add company name
+      doc.setFontSize(16);
+      doc.setTextColor(51, 51, 51);
+      doc.text(window.currentResearch.companyName, 20, 35);
+      
+      // Add metadata
+      doc.setFontSize(10);
+      doc.setTextColor(102, 102, 102);
+      doc.text(`Research Time: ${window.currentResearch.meta.researchTime.minutes}m ${window.currentResearch.meta.researchTime.seconds}s`, 20, 45);
+      doc.text(`Sources: ${window.currentResearch.meta.sourceCount}`, 20, 52);
+      doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 59);
+      
+      // Add content
+      doc.setFontSize(12);
+      doc.setTextColor(51, 51, 51);
+      
+      // Split content into lines that fit the page width
+      const lines = doc.splitTextToSize(window.currentResearch.result, 170);
+      doc.text(lines, 20, 70);
+      
+      // Save the PDF
+      doc.save(`${window.currentResearch.companyName}-research.pdf`);
+    }
+
+    // Share research functionality
+    async function shareResearch() {
+      try {
+        const response = await fetch('/save-research', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(window.currentResearch)
+        });
+        
+        const data = await response.json();
+        
+        // Create share modal
+        const modal = document.createElement('div');
+        modal.className = 'share-modal';
+        modal.innerHTML = `
+          <div class="share-modal-content">
+            <h3>Share Research</h3>
+            <p>Share this research about ${window.currentResearch.companyName}</p>
+            
+            <div class="share-link">
+              <input type="text" value="${data.shareUrl}" readonly>
+              <button onclick="copyShareLink(this)" class="action-btn">
+                <i class="fas fa-copy"></i> Copy
+              </button>
+            </div>
+            
+            <div class="share-options">
+              <button onclick="shareViaEmail('${data.shareUrl}')" class="action-btn">
+                <i class="fas fa-envelope"></i> Email
+              </button>
+              <button onclick="shareToSlack('${data.shareUrl}')" class="action-btn">
+                <i class="fab fa-slack"></i> Slack
+              </button>
+            </div>
+            
+            <button onclick="closeShareModal()" class="action-btn close">
+              <i class="fas fa-times"></i> Close
+            </button>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+      } catch (error) {
+        console.error('Error sharing research:', error);
+        alert('Failed to generate share link');
+      }
+    }
+
+    // Save to bookmarks functionality
+    async function saveToBookmarks() {
+      try {
+        const response = await fetch('/api/saved', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(window.currentResearch)
+        });
+        
+        if (response.ok) {
+          const saveBtn = document.querySelector('.action-btn i.fa-bookmark').parentElement;
+          saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved';
+          saveBtn.disabled = true;
+        }
+      } catch (error) {
+        console.error('Error saving research:', error);
+        alert('Failed to save research');
+      }
+    }
+
+    // Helper functions for sharing
+    function copyShareLink(button) {
+      const input = button.previousElementSibling;
+      input.select();
+      document.execCommand('copy');
+      button.innerHTML = '<i class="fas fa-check"></i> Copied';
+      setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-copy"></i> Copy';
+      }, 2000);
+    }
+
+    function shareViaEmail(url) {
+      const subject = encodeURIComponent(`Research: ${window.currentResearch.companyName}`);
+      const body = encodeURIComponent(`Check out this research about ${window.currentResearch.companyName}:\n\n${url}`);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    function shareToSlack(url) {
+      // Implement Slack sharing when you have the Slack API integration
+      alert('Slack sharing coming soon!');
+    }
+
+    function closeShareModal() {
+      document.querySelector('.share-modal').remove();
+    }
+
     document.getElementById('companyName').addEventListener('keypress', function(event) {
       if (event.key === 'Enter') {
         qualifyLead();
