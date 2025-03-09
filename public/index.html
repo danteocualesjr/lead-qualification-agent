@@ -315,13 +315,19 @@
         
         const data = await response.json();
         
-        // Create share modal
+        // Create share modal with expanded sharing options
         const modal = document.createElement('div');
         modal.className = 'share-modal';
         modal.innerHTML = `
           <div class="share-modal-content">
-            <h3>Share Research</h3>
-            <p>Share this research about ${window.currentResearch.companyName}</p>
+            <div class="modal-header">
+              <h3>Share Research</h3>
+              <button onclick="closeShareModal()" class="close-btn">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            
+            <p class="share-description">Share this research about ${window.currentResearch.companyName}</p>
             
             <div class="share-link">
               <input type="text" value="${data.shareUrl}" readonly>
@@ -330,18 +336,43 @@
               </button>
             </div>
             
-            <div class="share-options">
-              <button onclick="shareViaEmail('${data.shareUrl}')" class="action-btn">
-                <i class="fas fa-envelope"></i> Email
+            <div class="share-options-grid">
+              <button onclick="shareViaEmail('${data.shareUrl}')" class="share-btn email">
+                <i class="fas fa-envelope"></i>
+                <span>Email</span>
               </button>
-              <button onclick="shareToSlack('${data.shareUrl}')" class="action-btn">
-                <i class="fab fa-slack"></i> Slack
+              
+              <button onclick="shareToLinkedIn('${data.shareUrl}')" class="share-btn linkedin">
+                <i class="fab fa-linkedin"></i>
+                <span>LinkedIn</span>
+              </button>
+              
+              <button onclick="shareToTwitter('${data.shareUrl}')" class="share-btn twitter">
+                <i class="fab fa-twitter"></i>
+                <span>Twitter</span>
+              </button>
+              
+              <button onclick="shareToSlack('${data.shareUrl}')" class="share-btn slack">
+                <i class="fab fa-slack"></i>
+                <span>Slack</span>
+              </button>
+
+              <button onclick="shareToTeams('${data.shareUrl}')" class="share-btn teams">
+                <i class="fas fa-users"></i>
+                <span>Teams</span>
+              </button>
+
+              <button onclick="shareToWhatsApp('${data.shareUrl}')" class="share-btn whatsapp">
+                <i class="fab fa-whatsapp"></i>
+                <span>WhatsApp</span>
               </button>
             </div>
-            
-            <button onclick="closeShareModal()" class="action-btn close">
-              <i class="fas fa-times"></i> Close
-            </button>
+
+            <div class="advanced-options">
+              <button onclick="showAdvancedShare()" class="action-btn full-width">
+                <i class="fas fa-cog"></i> Advanced Options
+              </button>
+            </div>
           </div>
         `;
         
@@ -350,6 +381,81 @@
         console.error('Error sharing research:', error);
         alert('Failed to generate share link');
       }
+    }
+
+    // Social sharing functions
+    function shareToLinkedIn(url) {
+      const title = encodeURIComponent(`Research: ${window.currentResearch.companyName}`);
+      const summary = encodeURIComponent(`Check out this company research powered by Leadscape AI`);
+      const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${title}&summary=${summary}`;
+      window.open(linkedInUrl, '_blank', 'width=600,height=600');
+    }
+
+    function shareToTwitter(url) {
+      const text = encodeURIComponent(`Check out this research about ${window.currentResearch.companyName} via @LeadscapeAI`);
+      const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`;
+      window.open(twitterUrl, '_blank', 'width=600,height=400');
+    }
+
+    function shareToWhatsApp(url) {
+      const text = encodeURIComponent(`Check out this research about ${window.currentResearch.companyName}: ${url}`);
+      const whatsappUrl = `https://wa.me/?text=${text}`;
+      window.open(whatsappUrl, '_blank');
+    }
+
+    function shareToTeams(url) {
+      const text = encodeURIComponent(`Research: ${window.currentResearch.companyName}`);
+      const teamsUrl = `https://teams.microsoft.com/share?url=${encodeURIComponent(url)}&text=${text}`;
+      window.open(teamsUrl, '_blank', 'width=600,height=600');
+    }
+
+    function showAdvancedShare() {
+      const modalContent = document.querySelector('.share-modal-content');
+      modalContent.innerHTML += `
+        <div class="advanced-share-options">
+          <h4>Advanced Sharing Options</h4>
+          
+          <div class="share-setting">
+            <label>
+              <input type="checkbox" id="includeMetadata" checked>
+              Include research metadata
+            </label>
+          </div>
+          
+          <div class="share-setting">
+            <label>
+              <input type="checkbox" id="includeSources" checked>
+              Include source links
+            </label>
+          </div>
+          
+          <div class="share-setting">
+            <label>
+              <input type="checkbox" id="allowComments">
+              Enable comments
+            </label>
+          </div>
+          
+          <div class="share-setting">
+            <label>Share expires in:</label>
+            <select id="shareExpiry">
+              <option value="never">Never</option>
+              <option value="24h">24 hours</option>
+              <option value="7d">7 days</option>
+              <option value="30d">30 days</option>
+            </select>
+          </div>
+
+          <button onclick="updateShareSettings()" class="action-btn full-width">
+            <i class="fas fa-save"></i> Update Share Settings
+          </button>
+        </div>
+      `;
+    }
+
+    function updateShareSettings() {
+      // Implement share settings update logic here
+      alert('Share settings updated!');
     }
 
     // Save to bookmarks functionality
